@@ -134,11 +134,11 @@ if uploaded_file:
 
     # ==================== MODE 2: SIMULATED LIVE INTERVIEW MODE ====================
     else:
-        st.subheader("🎙️ Live Simulation Dashboard")
+        st.subheader("Live Simulation Dashboard")
         
         # --- ADDED NOTIFICATIONS / WARNINGS ---
-        st.warning("🌐 **macOS Safari Notice:** Safari security protocols block microphone inputs inside embedded windows. For the best interactive experience, please launch this app inside **Google Chrome** or **Microsoft Edge**.")
-        st.info("💾 **Deployment History Note:** Because this app runs on a free cloud server hosting layer, data metrics inside the *Personal Journey Progression Tracking* graphs below may reset occasionally whenever the cloud platform reboots. (Your history logs save permanently when running locally!)")
+        st.warning("**MacOS Safari Notice:** Safari security protocols block microphone inputs inside embedded windows. For the best interactive experience, please launch this app inside **Google Chrome** or **Microsoft Edge**.")
+        st.info("**Deployment History Note:** Because this app runs on a free cloud server hosting layer, data metrics inside the *Personal Journey Progression Tracking* graphs below may reset occasionally whenever the cloud platform reboots. (Your history logs save permanently when running locally!)")
         st.write("")
 
         if not st.session_state.sim_started:
@@ -155,7 +155,7 @@ if uploaded_file:
                 st.markdown(f"### 📋 Question {current_idx + 1} of {len(questions)}")
                 st.markdown(f'<div class="question-card">{current_q}</div>', unsafe_allow_html=True)
                 
-                if st.button("🔊 Play / Read Question Out Loud", key=f"speak_btn_{current_idx}"):
+                if st.button("Play / Read Question Out Loud", key=f"speak_btn_{current_idx}"):
                     speak_text(current_q)
                 
                 st.write("")
@@ -181,7 +181,7 @@ if uploaded_file:
                         recognition.lang = 'en-US';
                         let finalTranscript = '';
                         recognition.onstart = () => {{
-                            statusText.innerHTML = "🔴 Status: Listening... Speak clearly into your mic!";
+                            statusText.innerHTML = "Status: Listening.. Speak clearly into your mic!";
                             statusText.style.color = "#ff4b4b";
                             startBtn.disabled = true; stopBtn.disabled = false;
                             finalTranscript = ''; transcriptBox.value = '';
@@ -242,7 +242,7 @@ if uploaded_file:
     st.divider()
     st.subheader("📈 Personal Journey Progression Tracking")
     # Global architectural disclosure note
-    st.caption("⚙️ **Architecture Note:** This prototype leverages a global file-based SQLite database instance. Because there is no user authentication layer implemented for this staging build, performance analytics and data plots are aggregated globally across all active web sessions.")
+    st.caption("**Architecture Note:** This prototype leverages a global file-based SQLite database instance. Because there is no user authentication layer implemented for this staging build, performance analytics and data plots are aggregated globally across all active web sessions.")
     past_runs = get_all_sessions()
     if past_runs:
         history_df = pd.DataFrame(past_runs, columns=["Date", "Role", "Accuracy", "Communication", "Problem-Solving", "Pacing", "Feedback"])
