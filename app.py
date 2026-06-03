@@ -135,6 +135,12 @@ if uploaded_file:
     # ==================== MODE 2: SIMULATED LIVE INTERVIEW MODE ====================
     else:
         st.subheader("🎙️ Live Simulation Dashboard")
+        
+        # --- ADDED NOTIFICATIONS / WARNINGS ---
+        st.warning("🌐 **macOS Safari Notice:** Safari security protocols block microphone inputs inside embedded windows. For the best interactive experience, please launch this app inside **Google Chrome** or **Microsoft Edge**.")
+        st.info("💾 **Deployment History Note:** Because this app runs on a free cloud server hosting layer, data metrics inside the *Personal Journey Progression Tracking* graphs below may reset occasionally whenever the cloud platform reboots. (Your history logs save permanently when running locally!)")
+        st.write("")
+
         if not st.session_state.sim_started:
             st.info("Engage in a voice-simulated live round. Your data logs safely map tracking patterns automatically.")
             if st.button("🔥 Start Live Simulation Now", type="primary"):
