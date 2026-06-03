@@ -241,7 +241,8 @@ if uploaded_file:
     # ==================== HISTORICAL SYSTEM ANALYTICS ====================
     st.divider()
     st.subheader("📈 Personal Journey Progression Tracking")
-    
+    # Global architectural disclosure note
+    st.caption("⚙️ **Architecture Note:** This prototype leverages a global file-based SQLite database instance. Because there is no user authentication layer implemented for this staging build, performance analytics and data plots are aggregated globally across all active web sessions.")
     past_runs = get_all_sessions()
     if past_runs:
         history_df = pd.DataFrame(past_runs, columns=["Date", "Role", "Accuracy", "Communication", "Problem-Solving", "Pacing", "Feedback"])
