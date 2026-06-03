@@ -1,0 +1,5 @@
+venv/
+.env
+__pycache__/
+feedback.txt
+results.json
