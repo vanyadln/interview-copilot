@@ -7,7 +7,7 @@ The platform is designed to overcome standard cloud hosting limits. By injecting
 ### Application Preview and System Design
 
 <p align="center">
-  <img src="./Screenshot 2026-06-06 at 12.17.02 AM.png" alt="Interview Copilot Live Application Platform Overview" width="750" />
+  <img src="./copilot-dashboard.png" alt="Interview Copilot Live Application Platform Overview" width="750" />
 </p>
 
 To complement the live runtime preview, the schematic below documents the underlying data engineering pipeline that powers this visualization, from initial multi-source API aggregation to the final frontend render stack:
@@ -19,31 +19,26 @@ To complement the live runtime preview, the schematic below documents the underl
 ---
 
 ## Table of Contents
-1. [System Architecture](#1-system-architecture)
+1. [System Architecture & Runtime Notes](#1-system-architecture--runtime-notes)
 2. [Directory Structure and Component Roles](#2-directory-structure-and-component-roles)
-3. [Client-Side Audio Bridge & Telemetry Schema](#3-client-side-audio-bridge--telemetry-schema)
-4. [Staging Build & Runtime Architecture Notes](#4-staging-build--runtime-architecture-notes)
-5. [Cross-Browser Microphone Compatibility](#5-cross-browser-microphone-compatibility)
-6. [Local Development and Execution](#6-local-development-and-execution)
 
 ---
 
-## 1. System Architecture
+## 1. System Architecture & Runtime Notes
 
 The system is built using a decoupled, event-driven architecture that isolates file parsing and high-latency LLM completions from the interactive user interface loops to ensure fluid, sub-second view updates.
 
 ### Technical Pipeline Breakdown
-
-#### 1. Contextual Ingestion & Processing Layer
 * **Document Parsing Engine:** Utilizes a decoupled `PyPDF` ingestion layer to extract raw text blocks from user resume documents, filtering out layout noises and compiling the data into flat string tokens.
 * **Context-Driven Prompt Orchestration:** Merges parsed resume profiles with user-selected target roles (e.g., Software Engineer, Data Scientist, ML Engineer). This structured envelope is fired at a high-efficiency **Groq API runtime**, utilizing highly optimized system prompts to generate precise, non-generic technical questions.
+* **Client-Side Browser Sandbox Bypass:** Traditional Streamlit audio recorders fail when deployed inside Cloud iframe micro-services due to browser sandbox permission blocks. This system overrides this limitation by injecting an asynchronous, client-side JavaScript bridge. It safely captures physical microphone inputs, triggers native browser transcription engines, and pipes the transcribed text back into the Python execution line.
+* **Telemetry Evaluation & Storage:** The candidate's response is compared against the initial question context using localized grading prompt constraints. The resulting unstructured model output is forced into structured arrays evaluating four explicit axes: *Technical Accuracy, Communication, Confidence, and Missing Points*.
 
-#### 2. Client-Side Browser Sandbox Bypass
-* **Web Speech API Audio Bridge:** Traditional Streamlit audio recorders fail when deployed inside Cloud iframe micro-services due to browser sandbox permission blocks. This system overrides this limitation by injecting an asynchronous, client-side JavaScript bridge. It safely captures physical microphone inputs, triggers native browser transcription engines, and pipes the transcribed text back into the Python execution line.
+> **Global Session Aggregation Note** > This production prototype leverages a global file-based SQLite database instance. Because there is no formal user authentication layer implemented for this public staging build, performance analytics, historical metrics, and data plots are aggregated globally across all active web sessions. 
 
-#### 3. Telemetry Evaluation & Storage
-* **Token Matrix Formatting:** The candidate's response is compared against the initial question context using localized grading prompt constraints. The resulting unstructured model output is forced into structured arrays evaluating four explicit axes: *Technical Accuracy, Communication, Confidence, and Missing Points*.
-* **Relational Metrics Caching:** Final scores and targeted improvement plans are serialized into localized JSON models and cached inside an optimized `SQLite` relational schema to preserve historic performance analytics across multiple browser sessions.
+> **Ephemeral Cloud Hosting Lifecycle Note** > Because the staging live app runs on an ephemeral, free cloud server hosting layer, data metrics inside the Personal Journey Progression Tracking graphs may reset occasionally whenever the cloud platform reboots or goes idle. Note that your history logs save permanently and securely when running this architecture locally on a workstation!
+
+> **MacOS Safari Security Notice** > Strict Safari security protocols automatically block media capture device permissions (microphone inputs) when executed inside third-party embedded windows or cloud iframes. For the intended fully interactive vocal simulation experience, please launch this staging application inside Google Chrome or Microsoft Edge.
 
 ---
 
@@ -62,50 +57,3 @@ interview-copilot/
 ├── results.json            # Flat-file cache of localized question matrix histories
 └── feedback.txt            # Serialized candidate performance report outputs
 
-3. Client-Side Audio Bridge & Telemetry Schema
-Asynchronous JavaScript Transcription Hook
-To maintain audio processing speeds without configuring heavy cloud object storage bins, the application utilizes the browser's native window frame context. The operation steps run as follows:
-
-Plaintext
-[Streamlit UI] ---> (Injects Custom JS String) ---> [Browser Window Object]
-                                                           |
-  [Text Result Form Variable] <--- (Web Speech API) <--- [Microphone Hardware]
-Analytics Telemetry Data Payload
-When the feedback generator compiles an evaluation segment, model tokens are structurally parsed to maintain data validation integrity before database insertions:
-
-JSON
-{
-  "session_id": "9f7b2c14-e82b-427c-9189-130459a0f7e1",
-  "candidate_role": "Machine Learning Engineer",
-  "evaluation_metrics": {
-    "technical_accuracy": 88,
-    "communication": 75,
-    "confidence": 90,
-    "missing_points": ["Did not mention backpropagation complexity profiles in computational graph descriptions."]
-  },
-  "score_summary": {
-    "aggregate_rating": 84.2,
-    "status": "Target Threshold Achieved"
-  }
-}
-4. Staging Build & Runtime Architecture Notes
-Global Session Aggregation Note > This production prototype leverages a global file-based SQLite database instance. Because there is no formal user authentication layer implemented for this public staging build, performance analytics, historical metrics, and data plots are aggregated globally across all active web sessions.
-
-Ephemeral Cloud Hosting Lifecycle Note > Because the staging live app runs on an ephemeral, free cloud server hosting layer, data metrics inside the Personal Journey Progression Tracking graphs may reset occasionally whenever the cloud platform reboots or goes idle. Note that your history logs save permanently and securely when running this architecture locally on a workstation!
-
-5. Cross-Browser Microphone Compatibility
-MacOS Safari Security Notice > Strict Safari security protocols automatically block media capture device permissions (microphone inputs) when executed inside third-party embedded windows or cloud iframes. For the intended fully interactive vocal simulation experience, please launch this staging application inside Google Chrome or Microsoft Edge.
-
-6. Local Development and Execution
-To replicate the production environment locally on your workstation to maintain permanent analytics logs, execute the following configuration commands:
-
-Bash
-# 1. Clone the repository and navigate to root directory
-cd ~/interview-copilot
-
-# 2. Instantiate isolated Python virtual environment setup
-python3 -m venv venv
-source venv/bin/activate
-
-# 3. Spin up the Streamlit engine server locally
-python3 -m streamlit run app.py
