@@ -4,8 +4,16 @@ An enterprise-grade, full-stack technical interview simulation platform engineer
 
 The platform is designed to overcome standard cloud hosting limits. By injecting client-side JavaScript layers to bypass cross-origin browser restrictions and structuring model responses into deterministic validation schemas, the application provides instantaneous, high-fidelity interview scoring with zero localized compute overhead.
 
+### Application Preview and System Design
+
 <p align="center">
-  <img src="./copilot-dashboard.png" alt="Interview Copilot Live Application Platform Overview" width="750" />
+  <img src="./Screenshot 2026-06-06 at 12.17.02 AM.png" alt="Interview Copilot Live Application Platform Overview" width="750" />
+</p>
+
+To complement the live runtime preview, the schematic below documents the underlying data engineering pipeline that powers this visualization, from initial multi-source API aggregation to the final frontend render stack:
+
+<p align="center">
+  <img src="./copilot-pipeline.png" alt="Interview Copilot Asynchronous Processing Blueprint" width="700" />
 </p>
 
 ---
@@ -23,14 +31,6 @@ The platform is designed to overcome standard cloud hosting limits. By injecting
 ## 1. System Architecture
 
 The system is built using a decoupled, event-driven architecture that isolates file parsing and high-latency LLM completions from the interactive user interface loops to ensure fluid, sub-second view updates.
-
-### End-to-End Core Data Flow
-
-The blueprint below documents the underlying data engineering pipeline, mapping the lifecycle of an evaluation session from raw PDF ingestion to telemetry storage:
-
-<p align="center">
-  <img src="./copilot-pipeline.png" alt="Interview Copilot Asynchronous Processing Blueprint" width="700" />
-</p>
 
 ### Technical Pipeline Breakdown
 
@@ -62,18 +62,18 @@ interview-copilot/
 ├── results.json            # Flat-file cache of localized question matrix histories
 └── feedback.txt            # Serialized candidate performance report outputs
 
-## 3. Client-Side Audio Bridge & Telemetry Schema
-
-### Asynchronous JavaScript Transcription Hook
+3. Client-Side Audio Bridge & Telemetry Schema
+Asynchronous JavaScript Transcription Hook
 To maintain audio processing speeds without configuring heavy cloud object storage bins, the application utilizes the browser's native window frame context. The operation steps run as follows:
 
-```text
+Plaintext
 [Streamlit UI] ---> (Injects Custom JS String) ---> [Browser Window Object]
                                                            |
   [Text Result Form Variable] <--- (Web Speech API) <--- [Microphone Hardware]
-
-###Analytics Telemetry Data Payload
+Analytics Telemetry Data Payload
 When the feedback generator compiles an evaluation segment, model tokens are structurally parsed to maintain data validation integrity before database insertions:
+
+JSON
 {
   "session_id": "9f7b2c14-e82b-427c-9189-130459a0f7e1",
   "candidate_role": "Machine Learning Engineer",
@@ -88,23 +88,18 @@ When the feedback generator compiles an evaluation segment, model tokens are str
     "status": "Target Threshold Achieved"
   }
 }
+4. Staging Build & Runtime Architecture Notes
+Global Session Aggregation Note > This production prototype leverages a global file-based SQLite database instance. Because there is no formal user authentication layer implemented for this public staging build, performance analytics, historical metrics, and data plots are aggregated globally across all active web sessions.
 
-##4. Staging Build & Runtime Architecture Notes
-###Global Session Aggregation Note
+Ephemeral Cloud Hosting Lifecycle Note > Because the staging live app runs on an ephemeral, free cloud server hosting layer, data metrics inside the Personal Journey Progression Tracking graphs may reset occasionally whenever the cloud platform reboots or goes idle. Note that your history logs save permanently and securely when running this architecture locally on a workstation!
 
-This production prototype leverages a global file-based SQLite database instance. Because there is no formal user authentication layer implemented for this public staging build, performance analytics, historical metrics, and data plots are aggregated globally across all active web sessions.
+5. Cross-Browser Microphone Compatibility
+MacOS Safari Security Notice > Strict Safari security protocols automatically block media capture device permissions (microphone inputs) when executed inside third-party embedded windows or cloud iframes. For the intended fully interactive vocal simulation experience, please launch this staging application inside Google Chrome or Microsoft Edge.
 
-###Ephemeral Cloud Hosting Lifecycle Note
-
-Because the staging live app runs on an ephemeral, free cloud server hosting layer, data metrics inside the Personal Journey Progression Tracking graphs may reset occasionally whenever the cloud platform reboots or goes idle. Note that your history logs save permanently and securely when running this architecture locally on a workstation!
-
-##5. Cross-Browser Microphone Compatibility
-###MacOS Safari Security Notice
-
-Strict Safari security protocols automatically block media capture device permissions (microphone inputs) when executed inside third-party embedded windows or cloud iframes. For the intended fully interactive vocal simulation experience, please launch this staging application inside Google Chrome or Microsoft Edge.
-
-##6. Local Development and Execution
+6. Local Development and Execution
 To replicate the production environment locally on your workstation to maintain permanent analytics logs, execute the following configuration commands:
+
+Bash
 # 1. Clone the repository and navigate to root directory
 cd ~/interview-copilot
 
